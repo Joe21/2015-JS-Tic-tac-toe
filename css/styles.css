@@ -1,0 +1,84 @@
+#header {
+	height: 30px;
+	width: 100%;
+	border-bottom: 1px solid black;
+	display: block;
+
+	line-height: 30px;
+	font-weight: bold;
+	padding-left: 10px;
+}
+
+#wrapper {
+	width: 100%;
+	height: 600px;
+
+	/* Trigger display to block in order to render game*/
+	display: none;
+}
+
+#main {
+	padding: 10px;
+	height: 100%;
+	width: 70%;
+	float: left;
+}
+
+#messageboard {
+	width: 50%;
+	margin: auto;
+	height: 100px;
+	border: 1px solid black;
+	padding: 5px;
+}
+
+#board {
+	height: 231px;
+	width: 231px;
+	margin: auto;
+	position: relative;
+	top: 5%;
+	border: 1px solid black;
+}
+
+.box {
+	height: 75px;
+	width: 75px;
+	float: left;
+	border: 1px solid black;
+}
+
+#sidebar {
+	padding: 10px;
+	height: 100%;
+	width: 25%;
+	float: left;
+	border-left: 2px solid black;
+	text-align: center;
+}
+
+#scoreboard {
+	border: 1px solid red;
+	padding: 10px;
+	height: 75%;
+	width: 100%;
+	position: relative;
+}
+
+/* Overlay */
+#overlay {
+	padding: 10px;
+	text-align: center;
+}
+
+#menu-container {
+	border: 1px solid black;
+	padding: 10px;
+	margin: auto;
+	width: 33%;
+}
+
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;height:25px;width:50px;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg .tg-s6z2{text-align:center}
