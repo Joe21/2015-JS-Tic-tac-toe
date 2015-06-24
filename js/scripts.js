@@ -18,11 +18,6 @@ function globalContainer() {
 	// event driven gameMenu with callbacks to handle initializers
 	gameMenu(globalSettings, globalPlayer1, globalPlayer2);
 
-	// if(globalSettings.gameOver === true) {
-	// 	startGame(globalSettings, globalPlayer1, globalPlayer2);
-	// }
-
-
 	// ==========================================================================
 	// GLOBAL CONTAINER OBJECTS
 	// ==========================================================================
@@ -40,7 +35,7 @@ function globalContainer() {
 	// Constructor function to prototype settings object
 	function globalSettingsObject() {
 		this.gameMode = "",
-		this.gameOver = null;
+		this.gameOver = true;
 	}
 
 	// ==========================================================================
@@ -57,8 +52,8 @@ function globalContainer() {
 			// Closes overlay
 			toggleWrapper();
 
-			globalSettings.gameOver = true;
-
+			// Start game initializer
+			startGame(globalSettings, globalPlayer1, globalPlayer2);
 		})
 
 		$('#pvp-button').click(function() {
@@ -70,9 +65,9 @@ function globalContainer() {
 			// Closes overlay
 			toggleWrapper();
 
-			globalSettings.gameOver = true;
+			// Start game initializer
+			startGame(globalSettings, globalPlayer1, globalPlayer2);
 		})
-		return;
 	}
 
 	function initializeScoreboard(globalSettings, globalPlayer1, globalPlayer2) {
@@ -108,16 +103,15 @@ function globalContainer() {
 	// INITIALIZE GAME
 	// ==========================================================================
 	function startGame(globalSettings, globalPlayer1, globalPlayer2) {
-		var game;
 		globalSettings.gameOver = false;
 
-		// if(globalSettings.gameMode == 'pve') {
-		// 	game = new pveGame(globalSettings, globalPlayer1, globalPlayer2);
-		// } else {
-		// 	game = new pvpGame(globalSettings, globalPlayer1, globalPlayer2);
-		// }
-
-		console.log('started a new game')
+		if(globalSettings.gameMode == 'pve') {
+			pveGame(globalPlayer1, globalPlayer2);
+			console.log('started a pve game');
+		} else {
+			pvpGame(globalPlayer1, globalPlayer2);
+			console.log('started a pvp game');
+		}
 		return;
 	}
 
@@ -128,19 +122,19 @@ function globalContainer() {
 // ==========================================================================
 
 // Start PVP Game
-function startPVPGame(player1, player2) {
-	var game = new gameObject();
-	var playersArray = [player1, player2];
-	firstRandomPlayer = randomPlayer(player1, player2);
-	playersArray.splice(firstRandomPlayer, 1)
-	game.player1 = firstRandomPlayer;
-	game.player1.avatar = 'X';
-	game.player2 = playersArray[0];
-	game.player2.avatar = 'O';
-	game.turn = game.player1.avatar
+function pveGame(player1, player2) {
+	// var game = new gameObject();
+	// var playersArray = [player1, player2];
+	// firstRandomPlayer = randomPlayer(player1, player2);
+	// playersArray.splice(firstRandomPlayer, 1);
+	// game.player1 = firstRandomPlayer;
+	// game.player1.avatar = 'X';
+	// game.player2 = playersArray[0];
+	// game.player2.avatar = 'O';
+	// game.turn = game.player1.avatar;
 
-	console.log('player1 is '+ game.player1.name);
-	console.log('player2 is '+ game.player2.name);
+	console.log('player1 is '+ player1.name);
+	console.log('player2 is '+ player2.name);
 
 // 	this.player1 = player1,
 // 	this.player2 = player2,
@@ -150,8 +144,13 @@ function startPVPGame(player1, player2) {
 // - Assign avatar
 // - assign turn order
 // - update message board
-
 }
+
+function pvpGame(player1, player2) {
+	console.log('player1 is '+ player1.name);
+	console.log('player2 is '+ player2.name);
+}
+
 
 function randomPlayer(player1, player2) {
 	return (Math.floor(Math.random() * 2) == 0 ? player1 : player2);
