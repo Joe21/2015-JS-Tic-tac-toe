@@ -53,7 +53,7 @@ function globalContainer() {
 			toggleWrapper();
 
 			// Start game initializer
-			startGame(globalSettings, globalPlayer1, globalPlayer2);
+			initiateGameType(globalSettings, globalPlayer1, globalPlayer2);
 		})
 
 		$('#pvp-button').click(function() {
@@ -66,7 +66,7 @@ function globalContainer() {
 			toggleWrapper();
 
 			// Start game initializer
-			startGame(globalSettings, globalPlayer1, globalPlayer2);
+			initiateGameType(globalSettings, globalPlayer1, globalPlayer2);
 		})
 	}
 
@@ -102,15 +102,16 @@ function globalContainer() {
 	// ==========================================================================
 	// INITIALIZE GAME
 	// ==========================================================================
-	function startGame(globalSettings, globalPlayer1, globalPlayer2) {
+	function initiateGameType(globalSettings, globalPlayer1, globalPlayer2) {
 		globalSettings.gameOver = false;
 
 		if(globalSettings.gameMode == 'pve') {
-			pveGame(globalPlayer1, globalPlayer2);
 			console.log('started a pve game');
+			pveGame(globalSettings,globalPlayer1, globalPlayer2);
 		} else {
-			pvpGame(globalPlayer1, globalPlayer2);
 			console.log('started a pvp game');
+			// pvpGame(globalPlayer1, globalPlayer2);
+			new pvpGame(globalSettings,globalPlayer1, globalPlayer2);
 		}
 		return;
 	}
@@ -121,8 +122,8 @@ function globalContainer() {
 // GAME ENGINE
 // ==========================================================================
 
-// Start PVP Game
-function pveGame(player1, player2) {
+// Start PVP/PVE Game
+// function pveGame(player1, player2) {
 	// var game = new gameObject();
 	// var playersArray = [player1, player2];
 	// firstRandomPlayer = randomPlayer(player1, player2);
@@ -133,8 +134,8 @@ function pveGame(player1, player2) {
 	// game.player2.avatar = 'O';
 	// game.turn = game.player1.avatar;
 
-	console.log('player1 is '+ player1.name);
-	console.log('player2 is '+ player2.name);
+	// console.log('player1 is '+ player1.name);
+	// console.log('player2 is '+ player2.name);
 
 // 	this.player1 = player1,
 // 	this.player2 = player2,
@@ -144,11 +145,16 @@ function pveGame(player1, player2) {
 // - Assign avatar
 // - assign turn order
 // - update message board
-}
+// }
 
-function pvpGame(player1, player2) {
-	console.log('player1 is '+ player1.name);
-	console.log('player2 is '+ player2.name);
+function pvpGame(globalsettings, player1, player2) {
+	this.gameState = {
+		board : [null, null, null, null, null, null, null, null, null],
+		move : null,
+		players : [player1, player2],
+		turn: null,
+		turnCounter : 0
+	}
 }
 
 
