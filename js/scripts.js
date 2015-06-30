@@ -11,12 +11,12 @@ $(document).ready(function() {
 // 	- Deters javascript hacking to manipulate the score
 
 function globalContainer() {
-	var globalSettings = new globalSettingsObject;
+	var gameMode = null;
 	var globalPlayer1 = new player(1);
 	var globalPlayer2 = new player(2);
 
 	// event driven gameMenu with callbacks to handle initializers
-	gameMenu(globalSettings, globalPlayer1, globalPlayer2);
+	gameMenu(gameMode, globalPlayer1, globalPlayer2);
 
 	// ==========================================================================
 	// GLOBAL CONTAINER OBJECTS
@@ -32,47 +32,41 @@ function globalContainer() {
 		this.avatar = ""
 	}
 
-	// Constructor function to prototype settings object
-	function globalSettingsObject() {
-		this.gameMode = "",
-		this.gameOver = true;
-	}
-
 	// ==========================================================================
 	// INITIALIZE SETTINGS
 	// ==========================================================================
 
-	function gameMenu(globalSettings, globalPlayer1, globalPlayer2) {
+	function gameMenu(gameMode, globalPlayer1, globalPlayer2) {
 		$('#pve-button').click(function() {
-			globalSettings.gameMode = 'pve';
+			gameMode = 'pve';
 			
 			// initialize scoreboard, set player names
-			initializeScoreboard(globalSettings, globalPlayer1, globalPlayer2);
+			initializeScoreboard(gameMode, globalPlayer1, globalPlayer2);
 
 			// Closes overlay
 			toggleWrapper();
 
 			// Start game initializer
-			initiateGameType(globalSettings, globalPlayer1, globalPlayer2);
+			initiateGameType(gameMode, globalPlayer1, globalPlayer2);
 		})
 
 		$('#pvp-button').click(function() {
-			globalSettings.gameMode = 'pvp';
+			gameMode = 'pvp';
 
 			// initialize scoreboard, set player names
-			initializeScoreboard(globalSettings, globalPlayer1, globalPlayer2);
+			initializeScoreboard(gameMode, globalPlayer1, globalPlayer2);
 
 			// Closes overlay
 			toggleWrapper();
 
 			// Start game initializer
-			initiateGameType(globalSettings, globalPlayer1, globalPlayer2);
+			initiateGameType(gameMode, globalPlayer1, globalPlayer2);
 		})
 	}
 
-	function initializeScoreboard(globalSettings, globalPlayer1, globalPlayer2) {
+	function initializeScoreboard(gameMode, globalPlayer1, globalPlayer2) {
 		// initialize for 1 player vs AI
-		if(globalSettings.gameMode == 'pve') {
+		if(gameMode == 'pve') {
 			globalPlayer1.name = prompt('Please enter name for player 1');
 			$('#player1-name').text(globalPlayer1.name);
 			
@@ -102,28 +96,20 @@ function globalContainer() {
 		$('#status').append(msg);
 	}
 
-	function turnorder(X,O){
-
-	}
-
 	// ==========================================================================
 	// INITIALIZE GAME
 	// ==========================================================================
-	function initiateGameType(globalSettings, globalPlayer1, globalPlayer2) {
-		globalSettings.gameOver = false;
-
-		if(globalSettings.gameMode == 'pve') {
+	function initiateGameType(gameMode, globalPlayer1, globalPlayer2) {
+		if(gameMode == 'pve') {
 			console.log('started a pve game');
-			pveGame(globalSettings,globalPlayer1, globalPlayer2);
 		} else {
 			console.log('started a pvp game');
-			// pvpGame(globalPlayer1, globalPlayer2);
-			new pvpGame(globalSettings,globalPlayer1, globalPlayer2);
+			new pvpGame(globalPlayer1, globalPlayer2);
 		}
 		return;
 	}
 
-	function pvpGame(globalsettings, player1, player2) {
+	function pvpGame(player1, player2) {
 		// Initialize board, move, turn, turncounter, randomize players and avatars
 		var board = [null, null, null, null, null, null, null, null, null]
 		var turn = null;
@@ -136,7 +122,7 @@ function globalContainer() {
 			avatar : 'X'
 		}
 		var playerO = {
-			player : _.without(players, playerX)[0],
+			player : _.without(players, playerX.player)[0],
 			avatar : 'O'
 		}
 
@@ -144,10 +130,21 @@ function globalContainer() {
 		turn = playerX;
 		turnCounter += 1;
 		status('<strong>Current Move: </strong>' + turn.player.name + ' is ' + turn.avatar);
+
 		$('.box').on('click', function() {
 			var convertToJqueryID = ('#' + this.id);
 			current_move = $(convertToJqueryID);
 			move(current_move);
+			if(checkWin(turn.avatar)) {
+				alert('winner');
+			} else if (checkWin(turn.avatar) === null) {
+				alert('draw');
+			} else {
+				switchTurn();
+			}
+			
+			// if (checkwin)
+
 		})
 
 
@@ -171,9 +168,44 @@ function globalContainer() {
 			}
 		}
 
+		// Check for win condition
+		function checkWin(avatar) {
+			if (gameOver === false && turnCounter == 9) {
+				return null;
+			} else if(board[0] == avatar && board[1] == avatar && board[2] == avatar) {
+				return true;
+			} else if (board[3] == avatar && board[4] == avatar && board[5] == avatar) {
+				return true;
+			} else if (board[6] == avatar && board[7] == avatar && board[8] == avatar) {
+				return true;
+			} else if (board[0] == avatar && board[3] == avatar && board[6] == avatar) {
+				return true;
+			} else if (board[1] == avatar && board[4] == avatar && board[7] == avatar) {
+				return true;
+			} else if (board[2] == avatar && board[5] == avatar && board[8] == avatar) {
+				return true;
+			} else if (board[0] == avatar && board[4] == avatar && board[8] == avatar) {
+				return true;
+			} else if (board[2] == avatar && board[4] == avatar && board[6] == avatar) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 
+		function switchTurn() {
+			if(turn == playerX && gameOver === false) {
+				turn = playerO;
+				turnCounter ++;
+				status('<strong>Current Move: </strong>' + turn.player.name + ' is ' + turn.avatar);
+			} else if( turn == playerO && gameOver === false) {
+				turn = playerX;
+				turnCounter ++;
+				status('<strong>Current Move: </strong>' + turn.player.name + ' is ' + turn.avatar);
+			}
+		}
 
-	}
+	} // <--- End of pvpGame 
 
 
 
