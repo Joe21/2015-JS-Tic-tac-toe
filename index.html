@@ -9,6 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/normalize.css">
 <link rel="stylesheet" href="css/styles.css">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 <!--[if lt IE 9]>
 <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -20,18 +21,20 @@
 	<div id="header">Tic Tac Toe in JavaScript</div>
 
 	<div id="wrapper">
-		<div id="main">MAIN
-			<div id="messageboard">Welcome</div>
+		<div id="main">Main
+
+			<div id="status"></div>
+			
 			<div id="board">
-				<div class="box" id="0"></div>
-				<div class="box" id="1"></div>
-				<div class="box" id="2"></div>
-				<div class="box" id="3"></div>
-				<div class="box" id="4"></div>
-				<div class="box" id="5"></div>
-				<div class="box" id="6"></div>
-				<div class="box" id="7"></div>
-				<div class="box" id="8"></div>
+				<div class="box open" id="0"></div>
+				<div class="box open" id="1"></div>
+				<div class="box open" id="2"></div>
+				<div class="box open" id="3"></div>
+				<div class="box open" id="4"></div>
+				<div class="box open" id="5"></div>
+				<div class="box open" id="6"></div>
+				<div class="box open" id="7"></div>
+				<div class="box open" id="8"></div>
 			</div>
 		</div>
 

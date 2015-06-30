@@ -92,12 +92,19 @@ function globalContainer() {
 
 	// Close overlay and render wrapper
 	function toggleWrapper(){
-		var wrapper	= $('#wrapper');
-		var overlay = $('#overlay');
-		wrapper.toggle();
-		overlay.toggle();
+		$('#wrapper').toggle();
+		$('#overlay').toggle();
 	}
 
+	// Update messageboard
+	function status(msg) {
+		$('#status').empty();
+		$('#status').append(msg);
+	}
+
+	function turnorder(X,O){
+
+	}
 
 	// ==========================================================================
 	// INITIALIZE GAME
@@ -115,6 +122,61 @@ function globalContainer() {
 		}
 		return;
 	}
+
+	function pvpGame(globalsettings, player1, player2) {
+		// Initialize board, move, turn, turncounter, randomize players and avatars
+		var board = [null, null, null, null, null, null, null, null, null]
+		var turn = null;
+		var current_move;
+		var turnCounter = 0;
+		var gameOver = false;
+		var players = [player1, player2];
+		var playerX = {
+			player : randomPlayer(player1, player2),
+			avatar : 'X'
+		}
+		var playerO = {
+			player : _.without(players, playerX)[0],
+			avatar : 'O'
+		}
+
+		// Game Control Flow
+		turn = playerX;
+		turnCounter += 1;
+		status('<strong>Current Move: </strong>' + turn.player.name + ' is ' + turn.avatar);
+		$('.box').on('click', function() {
+			var convertToJqueryID = ('#' + this.id);
+			current_move = $(convertToJqueryID);
+			move(current_move);
+		})
+
+
+
+		// Helper functions
+		// Return randomized player
+		function randomPlayer(player1, player2) {
+			return (Math.floor(Math.random() * 2) == 0 ? player1 : player2);
+		}
+
+		// Conditional on click handler to process moves
+		function move(square) {
+			if(square.hasClass('closed') && gameOver === false) {
+				status('<strong>Current Move: </strong>' + turn.player.name + ' is ' + turn.avatar + '\nInvalid move. Please choose an empty box.');
+			} else if (square.hasClass('open') && gameOver === false) {
+				square.removeClass('open');
+				square.addClass('closed');
+				square.text(turn.avatar);
+				var index = square.attr('id');
+				board[index] = turn.avatar;
+			}
+		}
+
+
+
+	}
+
+
+
 
 } // <---- End of Global Container
 
@@ -147,20 +209,10 @@ function globalContainer() {
 // - update message board
 // }
 
-function pvpGame(globalsettings, player1, player2) {
-	this.gameState = {
-		board : [null, null, null, null, null, null, null, null, null],
-		move : null,
-		players : [player1, player2],
-		turn: null,
-		turnCounter : 0
-	}
-}
 
 
-function randomPlayer(player1, player2) {
-	return (Math.floor(Math.random() * 2) == 0 ? player1 : player2);
-}
+
+
 
 
 
