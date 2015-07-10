@@ -1,5 +1,6 @@
 // On document ready, instantiate globalContainer
 $(document).ready(function() {
+	var currentGame;
 	globalContainer();
 });
 
@@ -104,7 +105,7 @@ function globalContainer() {
 			console.log('started a pve game');
 		} else {
 			console.log('started a pvp game');
-			new pvpGame(globalPlayer1, globalPlayer2);
+			currentGame = new pvpGame(globalPlayer1, globalPlayer2);
 		}
 		return;
 	}
@@ -137,14 +138,13 @@ function globalContainer() {
 			move(current_move);
 			if(checkWin(turn.avatar)) {
 				alert('winner');
+				endGame();
 			} else if (checkWin(turn.avatar) === null) {
 				alert('draw');
+				endGame();
 			} else {
 				switchTurn();
 			}
-			
-			// if (checkwin)
-
 		})
 
 
@@ -173,20 +173,28 @@ function globalContainer() {
 			if (gameOver === false && turnCounter == 9) {
 				return null;
 			} else if(board[0] == avatar && board[1] == avatar && board[2] == avatar) {
+				gameOver = true;
 				return true;
 			} else if (board[3] == avatar && board[4] == avatar && board[5] == avatar) {
+				gameOver = true;
 				return true;
 			} else if (board[6] == avatar && board[7] == avatar && board[8] == avatar) {
+				gameOver = true;
 				return true;
 			} else if (board[0] == avatar && board[3] == avatar && board[6] == avatar) {
+				gameOver = true;
 				return true;
 			} else if (board[1] == avatar && board[4] == avatar && board[7] == avatar) {
+				gameOver = true;
 				return true;
 			} else if (board[2] == avatar && board[5] == avatar && board[8] == avatar) {
+				gameOver = true;
 				return true;
 			} else if (board[0] == avatar && board[4] == avatar && board[8] == avatar) {
+				gameOver = true;
 				return true;
 			} else if (board[2] == avatar && board[4] == avatar && board[6] == avatar) {
+				gameOver = true;
 				return true;
 			} else {
 				return false;
@@ -203,6 +211,11 @@ function globalContainer() {
 				turnCounter ++;
 				status('<strong>Current Move: </strong>' + turn.player.name + ' is ' + turn.avatar);
 			}
+		}
+
+		function endGame() {
+			console.log("turn #" + turnCounter);
+			console.log("gameover = " + gameOver);
 		}
 
 	} // <--- End of pvpGame 
