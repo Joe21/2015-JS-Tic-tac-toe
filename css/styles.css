@@ -69,6 +69,13 @@ body, html, #wrapper{
 	background-color: #5E7C88;
 }
 
+.X {
+	color: black;
+}
+
+.O {
+	color: white;
+}
 
 #sidebar {
 	margin: auto;

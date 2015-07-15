@@ -105,6 +105,7 @@ function globalContainer() {
 			console.log('started a pve game');
 		} else {
 			console.log('started a pvp game');
+			// Mutate currentGame object in order to prevent memory leaks with future games / lack of gc support
 			currentGame = new pvpGame(globalPlayer1, globalPlayer2);
 		}
 		return;
@@ -127,7 +128,16 @@ function globalContainer() {
 			avatar : 'O'
 		}
 
+		function freshGame() {
+			$('.box').empty();
+			$('.box').removeClass('closed');
+			$('.box').removeClass('O');
+			$('.box').removeClass('X');
+			$('.box').addClass('open');
+		}
+
 		// Game Control Flow
+		freshGame();
 		turn = playerX;
 		turnCounter += 1;
 		status('<strong>Current Move: </strong>' + turn.player.name + ' is ' + turn.avatar);
@@ -136,14 +146,18 @@ function globalContainer() {
 			var convertToJqueryID = ('#' + this.id);
 			current_move = $(convertToJqueryID);
 			move(current_move);
-			if(checkWin(turn.avatar)) {
-				alert('winner');
+			if(checkWin(turn.avatar) && gameOver === false) {
+				updateScoreForWin();
+				updateScoreBoard();
+				status('<strong>' + turn.player.name + ' wins!</strong>');
 				endGame();
-			} else if (checkWin(turn.avatar) === null) {
-				alert('draw');
-				endGame();
+			} else if (turnCounter < 9 && gameOver === false) {
+				switchTurn()
 			} else {
-				switchTurn();
+				updateScoreForDraw();
+				updateScoreBoard();
+				status('<strong>Draw game!</strong>');
+				endGame();
 			}
 		})
 
@@ -162,6 +176,7 @@ function globalContainer() {
 			} else if (square.hasClass('open') && gameOver === false) {
 				square.removeClass('open');
 				square.addClass('closed');
+				square.addClass(turn.avatar);
 				square.text(turn.avatar);
 				var index = square.attr('id');
 				board[index] = turn.avatar;
@@ -170,31 +185,22 @@ function globalContainer() {
 
 		// Check for win condition
 		function checkWin(avatar) {
-			if (gameOver === false && turnCounter == 9) {
-				return null;
-			} else if(board[0] == avatar && board[1] == avatar && board[2] == avatar) {
-				gameOver = true;
+			// First condition checks for null via max turn count
+			if(board[0] == avatar && board[1] == avatar && board[2] == avatar) {
 				return true;
 			} else if (board[3] == avatar && board[4] == avatar && board[5] == avatar) {
-				gameOver = true;
 				return true;
 			} else if (board[6] == avatar && board[7] == avatar && board[8] == avatar) {
-				gameOver = true;
 				return true;
 			} else if (board[0] == avatar && board[3] == avatar && board[6] == avatar) {
-				gameOver = true;
 				return true;
 			} else if (board[1] == avatar && board[4] == avatar && board[7] == avatar) {
-				gameOver = true;
 				return true;
 			} else if (board[2] == avatar && board[5] == avatar && board[8] == avatar) {
-				gameOver = true;
 				return true;
 			} else if (board[0] == avatar && board[4] == avatar && board[8] == avatar) {
-				gameOver = true;
 				return true;
 			} else if (board[2] == avatar && board[4] == avatar && board[6] == avatar) {
-				gameOver = true;
 				return true;
 			} else {
 				return false;
@@ -214,8 +220,36 @@ function globalContainer() {
 		}
 
 		function endGame() {
-			console.log("turn #" + turnCounter);
-			console.log("gameover = " + gameOver);
+			updateScoreBoard();
+			console.log(turn.player.wins);
+			gameOver = true;
+
+			// Disable boxes to prevent score hacking
+			$("#box *").attr("disabled", "disabled").off('click');
+
+			if(confirm("Rematch?")) {
+				currentGame = new pvpGame(globalPlayer1, globalPlayer2);
+			}
+		}
+
+		function updateScoreForWin() {
+			turn.player.wins++;
+			_.without(players, turn.player)[0].losses++;
+		}
+
+		function updateScoreForDraw() {
+			player1.draws++;
+			player2.draws++;
+		}
+
+		function updateScoreBoard(){
+			$('#player1-wins').text(player1.wins);
+			$('#player1-losses').text(player1.losses);
+			$('#player1-draws').text(player1.draws);
+
+			$('#player2-wins').text(player2.wins);
+			$('#player2-losses').text(player2.losses);
+			$('#player2-draws').text(player2.draws);
 		}
 
 	} // <--- End of pvpGame 
