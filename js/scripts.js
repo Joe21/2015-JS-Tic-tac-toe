@@ -25,12 +25,12 @@ function globalContainer() {
 
 	// Constructor function to prototype player object
 	function player(id) {
-		this.id = id,
-		this.name = "",
-		this.wins = 0,
-		this.losses = 0,
-		this.draws = 0,
-		this.avatar = ""
+		self.id = id,
+		self.name = "",
+		self.wins = 0,
+		self.losses = 0,
+		self.draws = 0,
+		self.avatar = ""
 	}
 
 	// ==========================================================================
@@ -113,18 +113,34 @@ function globalContainer() {
 
 	function pvpGame(player1, player2) {
 		// Initialize board, move, turn, turncounter, randomize players and avatars
-		var board = [null, null, null, null, null, null, null, null, null]
-		var turn = null;
-		var current_move;
-		var turnCounter = 0;
-		var gameOver = false;
-		var players = [player1, player2];
-		var playerX = {
+		// var board = [null, null, null, null, null, null, null, null, null]
+		// var turn = null;
+		// var currentMove;
+		// var turnCounter = 1;
+		// var gameOver = false;
+		// var players = [player1, player2];
+		// var playerX = {
+		// 	player : randomPlayer(player1, player2),
+		// 	avatar : 'X'
+		// }
+		// var playerO = {
+		// 	player : _.without(players, playerX.player)[0],
+		// 	avatar : 'O'
+		// }
+		var self = this;
+
+		self.board = [null, null, null, null, null, null, null, null, null],
+		self.turn = null,
+		self.currentMove = null,
+		self.turnCounter = 1,
+		self.gameOver = false,
+		self.players = [player1, player2],
+		self.playerX = {
 			player : randomPlayer(player1, player2),
 			avatar : 'X'
-		}
-		var playerO = {
-			player : _.without(players, playerX.player)[0],
+		},
+		self.playerO = {
+			player : _.without(self.players, self.playerX.player)[0],
 			avatar : 'O'
 		}
 
@@ -138,20 +154,21 @@ function globalContainer() {
 
 		// Game Control Flow
 		freshGame();
-		turn = playerX;
-		turnCounter += 1;
-		status('<strong>Current Move: </strong>' + turn.player.name + ' is ' + turn.avatar);
+		console.log('turncounter is ' + self.turnCounter);
+		self.turn = self.playerX;
+		status('<strong>Current Move: </strong>' + self.turn.player.name + ' is ' + self.turn.avatar);
 
 		$('.box').on('click', function() {
 			var convertToJqueryID = ('#' + this.id);
-			current_move = $(convertToJqueryID);
-			move(current_move);
-			if(checkWin(turn.avatar) && gameOver === false) {
+			self.currentMove = $(convertToJqueryID);
+			move(self.currentMove);
+			console.log("Turn: " + self.turnCounter);
+			if(checkWin(self.turn.avatar) && self.gameOver === true) {
 				updateScoreForWin();
 				updateScoreBoard();
-				status('<strong>' + turn.player.name + ' wins!</strong>');
+				status('<strong>' + self.turn.player.name + ' wins!</strong>');
 				endGame();
-			} else if (turnCounter < 9 && gameOver === false) {
+			} else if (self.turnCounter < 10 && self.gameOver === false) {
 				switchTurn()
 			} else {
 				updateScoreForDraw();
@@ -171,36 +188,47 @@ function globalContainer() {
 
 		// Conditional on click handler to process moves
 		function move(square) {
-			if(square.hasClass('closed') && gameOver === false) {
-				status('<strong>Current Move: </strong>' + turn.player.name + ' is ' + turn.avatar + '\nInvalid move. Please choose an empty box.');
-			} else if (square.hasClass('open') && gameOver === false) {
+			if(square.hasClass('open')) {
 				square.removeClass('open');
 				square.addClass('closed');
-				square.addClass(turn.avatar);
-				square.text(turn.avatar);
+				square.addClass(self.turn.avatar);
+				square.text(self.turn.avatar);
 				var index = square.attr('id');
-				board[index] = turn.avatar;
+				self.board[index] = self.turn.avatar;
+				self.turnCounter++;
+			} else {
+				// [Note] Call switchTurn on illegal move as double negative will handle this quite well.
+				switchTurn();
+				status('Invalid move! \n<strong>Current Move: </strong>' + self.turn.player.name + ' is ' + self.turn.avatar); 
 			}
 		}
 
 		// Check for win condition
 		function checkWin(avatar) {
 			// First condition checks for null via max turn count
-			if(board[0] == avatar && board[1] == avatar && board[2] == avatar) {
+			if(self.board[0] == avatar && self.board[1] == avatar && self.board[2] == avatar) {
+				self.gameOver = true;
 				return true;
-			} else if (board[3] == avatar && board[4] == avatar && board[5] == avatar) {
+			} else if (self.board[3] == avatar && self.board[4] == avatar && self.board[5] == avatar) {
+				self.gameOver = true;
 				return true;
-			} else if (board[6] == avatar && board[7] == avatar && board[8] == avatar) {
+			} else if (self.board[6] == avatar && self.board[7] == avatar && self.board[8] == avatar) {
+				self.gameOver = true;
 				return true;
-			} else if (board[0] == avatar && board[3] == avatar && board[6] == avatar) {
+			} else if (self.board[0] == avatar && self.board[3] == avatar && self.board[6] == avatar) {
+				self.gameOver = true;
 				return true;
-			} else if (board[1] == avatar && board[4] == avatar && board[7] == avatar) {
+			} else if (self.board[1] == avatar && self.board[4] == avatar && self.board[7] == avatar) {
+				self.gameOver = true;
 				return true;
-			} else if (board[2] == avatar && board[5] == avatar && board[8] == avatar) {
+			} else if (self.board[2] == avatar && self.board[5] == avatar && self.board[8] == avatar) {
+				self.gameOver = true;
 				return true;
-			} else if (board[0] == avatar && board[4] == avatar && board[8] == avatar) {
+			} else if (self.board[0] == avatar && self.board[4] == avatar && self.board[8] == avatar) {
+				self.gameOver = true;
 				return true;
-			} else if (board[2] == avatar && board[4] == avatar && board[6] == avatar) {
+			} else if (self.board[2] == avatar && self.board[4] == avatar && self.board[6] == avatar) {
+				self.gameOver = true;
 				return true;
 			} else {
 				return false;
@@ -208,38 +236,35 @@ function globalContainer() {
 		}
 
 		function switchTurn() {
-			if(turn == playerX && gameOver === false) {
-				turn = playerO;
-				turnCounter ++;
-				status('<strong>Current Move: </strong>' + turn.player.name + ' is ' + turn.avatar);
-			} else if( turn == playerO && gameOver === false) {
-				turn = playerX;
-				turnCounter ++;
-				status('<strong>Current Move: </strong>' + turn.player.name + ' is ' + turn.avatar);
+			if(self.turn == self.playerX && self.gameOver === false) {
+				self.turn = self.playerO;
+				status('<strong>Current Move: </strong>' + self.turn.player.name + ' is ' + self.turn.avatar);
+			} else if(self.turn == self.playerO && self.gameOver === false) {
+				self.turn = self.playerX;
+				status('<strong>Current Move: </strong>' + self.turn.player.name + ' is ' + self.turn.avatar);
 			}
 		}
 
 		function endGame() {
 			updateScoreBoard();
-			console.log(turn.player.wins);
-			gameOver = true;
-
 			// Disable boxes to prevent score hacking
 			$("#box *").attr("disabled", "disabled").off('click');
 
 			if(confirm("Rematch?")) {
+				currentGame = null;
+				delete currentGame;
 				currentGame = new pvpGame(globalPlayer1, globalPlayer2);
 			}
 		}
 
 		function updateScoreForWin() {
-			turn.player.wins++;
-			_.without(players, turn.player)[0].losses++;
+			self.turn.player.wins++;
+			_.without(self.players, self.turn.player)[0].losses++;
 		}
 
 		function updateScoreForDraw() {
-			player1.draws++;
-			player2.draws++;
+			self.player1.draws++;
+			self.player2.draws++;
 		}
 
 		function updateScoreBoard(){
@@ -258,6 +283,14 @@ function globalContainer() {
 
 
 } // <---- End of Global Container
+
+
+
+// ***********
+// Bug fix - Need to close the event handler upon "deleting reference to old game".
+// **********
+
+
 
 // ==========================================================================
 // GAME ENGINE
@@ -278,10 +311,10 @@ function globalContainer() {
 	// console.log('player1 is '+ player1.name);
 	// console.log('player2 is '+ player2.name);
 
-// 	this.player1 = player1,
-// 	this.player2 = player2,
-// 	this.turn = null,
-// 	this.gameOver = false
+// 	self.player1 = player1,
+// 	self.player2 = player2,
+// 	self.turn = null,
+// 	self.gameOver = false
 
 // - Assign avatar
 // - assign turn order
@@ -299,10 +332,6 @@ function globalContainer() {
 // ==========================================================================
 // GAME MECHANICS
 // ==========================================================================
-
-function MakeMove() {
-
-}
 
 
 
